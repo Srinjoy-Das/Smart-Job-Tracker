@@ -58,6 +58,8 @@ The app allows users to add, view, and delete job applications while storing all
 
 ---
 
+📂 Project Architecture
+
 com.srinjoy.jobtracker
 ├── adapter
 │   └── JobAdapter.java
