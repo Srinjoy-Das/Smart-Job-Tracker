@@ -23,13 +23,13 @@ public class AddEditJobActivity extends AppCompatActivity {
     private EditText editTextNotes;
 
     private JobViewModel jobViewModel;
+    private int jobId = -1;   // -1 means Add Mode
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_job);
 
-        // Initialize views
         editTextCompany = findViewById(R.id.edit_text_company);
         editTextRole = findViewById(R.id.edit_text_role);
         editTextStatus = findViewById(R.id.edit_text_status);
@@ -42,6 +42,32 @@ public class AddEditJobActivity extends AppCompatActivity {
 
         jobViewModel = new ViewModelProvider(this).get(JobViewModel.class);
 
+        if (getIntent().hasExtra("id")) {
+            setTitle("Edit Job Application");
+
+            jobId = getIntent().getIntExtra("id", -1);
+
+            editTextCompany.setText(getIntent().getStringExtra("company"));
+            editTextRole.setText(getIntent().getStringExtra("role"));
+            editTextStatus.setText(getIntent().getStringExtra("status"));
+
+            editTextApplicationDate.setText(
+                    getIntent().getStringExtra("applicationDate")
+            );
+            editTextInterviewDate.setText(
+                    getIntent().getStringExtra("interviewDate")
+            );
+            editTextSalary.setText(
+                    getIntent().getStringExtra("salary")
+            );
+            editTextNotes.setText(
+                    getIntent().getStringExtra("notes")
+            );
+
+        } else {
+            setTitle("Add Job Application");
+        }
+
         buttonSave.setOnClickListener(v -> saveJob());
     }
 
@@ -49,14 +75,16 @@ public class AddEditJobActivity extends AppCompatActivity {
         String company = editTextCompany.getText().toString().trim();
         String role = editTextRole.getText().toString().trim();
         String status = editTextStatus.getText().toString().trim();
-        String applicationDate = editTextApplicationDate.getText().toString().trim();
-        String interviewDate = editTextInterviewDate.getText().toString().trim();
+        String applicationDate =
+                editTextApplicationDate.getText().toString().trim();
+        String interviewDate =
+                editTextInterviewDate.getText().toString().trim();
         String salary = editTextSalary.getText().toString().trim();
         String notes = editTextNotes.getText().toString().trim();
 
-        if (TextUtils.isEmpty(company) ||
-                TextUtils.isEmpty(role) ||
-                TextUtils.isEmpty(status)) {
+        if (TextUtils.isEmpty(company)
+                || TextUtils.isEmpty(role)
+                || TextUtils.isEmpty(status)) {
 
             Toast.makeText(
                     this,
@@ -76,13 +104,26 @@ public class AddEditJobActivity extends AppCompatActivity {
                 notes
         );
 
-        jobViewModel.insert(jobApplication);
 
-        Toast.makeText(
-                this,
-                "Job application saved successfully",
-                Toast.LENGTH_SHORT
-        ).show();
+        if (jobId != -1) {
+            jobApplication.setId(jobId);
+            jobViewModel.update(jobApplication);
+
+            Toast.makeText(
+                    this,
+                    "Job application updated successfully",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+        else {
+            jobViewModel.insert(jobApplication);
+
+            Toast.makeText(
+                    this,
+                    "Job application saved successfully",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
 
         finish();
     }

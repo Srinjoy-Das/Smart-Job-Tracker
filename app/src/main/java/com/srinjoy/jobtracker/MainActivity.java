@@ -38,12 +38,28 @@ public class MainActivity extends AppCompatActivity {
             setTitle("Job Tracker (" + jobs.size() + ")");
         });
 
+        // Add new job
         FloatingActionButton buttonAddJob = findViewById(R.id.button_add_job);
         buttonAddJob.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddEditJobActivity.class);
             startActivity(intent);
         });
 
+        adapter.setOnItemClickListener(jobApplication -> {
+            Intent intent = new Intent(MainActivity.this, AddEditJobActivity.class);
+
+            intent.putExtra("id", jobApplication.getId());
+            intent.putExtra("company", jobApplication.getCompanyName());
+            intent.putExtra("role", jobApplication.getJobRole());
+            intent.putExtra("status", jobApplication.getStatus());
+
+             intent.putExtra("date", jobApplication.getApplicationDate());
+             intent.putExtra("notes", jobApplication.getNotes());
+
+            startActivity(intent);
+        });
+
+        // Swipe to delete
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT

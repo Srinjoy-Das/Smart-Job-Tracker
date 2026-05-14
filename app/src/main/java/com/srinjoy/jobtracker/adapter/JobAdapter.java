@@ -17,6 +17,7 @@ import java.util.List;
 public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
 
     private List<JobApplication> jobList = new ArrayList<>();
+    private OnItemClickListener listener;
 
     @NonNull
     @Override
@@ -49,7 +50,15 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         return jobList.get(position);
     }
 
-    static class JobViewHolder extends RecyclerView.ViewHolder {
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(JobApplication jobApplication);
+    }
+
+    class JobViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView textViewCompany;
         private final TextView textViewRole;
@@ -61,6 +70,18 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             textViewCompany = itemView.findViewById(R.id.text_view_company);
             textViewRole = itemView.findViewById(R.id.text_view_role);
             textViewStatus = itemView.findViewById(R.id.text_view_status);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+
+                    if (listener != null &&
+                            position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(jobList.get(position));
+                    }
+                }
+            });
         }
     }
 }
